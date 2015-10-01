@@ -20,15 +20,15 @@ use List::Util 'sum';
 ### SET UP ENVIRONMENT ###
 ############################################################################
 # Set ENV variable for the /SEAR_bin (see README.md for how to set up /SEAR_bin correctly).
-$ENV{'PATH'} = '/disk1/SEAR_commandline_version/SEAR_bin';
+$ENV{'PATH'} = '/bin';
 # Set path to SEAR_commandline_version directory (containing Sear.pm module)
-BEGIN {push @INC, '/disk1/SEAR_commandline_version'};
+BEGIN {push @INC, '/SEAR/'};
 
 ############################################################################
 ### SET PATHS FOR SERVER ###
 ############################################################################
 # Set path to the SEAR_DATA working directory. The directory must be named: SEAR_DATA and have sufficient memory allocation.
-my $SEAR_DATA_directory = "/disk1/SEAR_commandline_version/SEAR_DATA";
+my $SEAR_DATA_directory = "/SEAR/SEAR_DATA";
 # If using the 'remove read contamination feature', set path to the Human Genome BWAIndex
 my $hg_path = "/disk1/Homo_sapiens/Ensembl/GRCh37/Sequence/BWAIndex/genome.fa";
 # If using the 'remove read contamination feature', set path to the Ecoli K12 BWAIndex
