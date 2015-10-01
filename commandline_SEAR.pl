@@ -20,7 +20,7 @@ use List::Util 'sum';
 ### SET UP ENVIRONMENT ###
 ############################################################################
 # Set ENV variable for the /SEAR_bin (see README.md for how to set up /SEAR_bin correctly).
-$ENV{'PATH'} = '/bin';
+$ENV{'PATH'} = '/bin:/usr/bin';
 # Set path to SEAR_commandline_version directory (containing Sear.pm module)
 BEGIN {push @INC, '/SEAR'};
 
