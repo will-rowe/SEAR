@@ -1,0 +1,5 @@
+SEAR.docker_version is the SEAR version that is behind the SEAR Illumina BaseSpace App.
+
+The docker image can be built using the Dockerfile in the current directory:
+	docker build -t 'sear:basespace' .
+
