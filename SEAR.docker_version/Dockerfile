@@ -13,9 +13,10 @@ ncbi-blast+ \
 bwa \
 tophat \
 seqtk \
-r-base
+r-base \
+libJSON-perl
 
-RUN cachebuster=b953b35 git clone git://github.com/wpmr2/SEAR /tmp/SEAR && ls /tmp/SEAR && mv /tmp/SEAR/SEAR.docker_version/SEAR / && cp /tmp/SEAR/SEAR.docker_version/BaseSpace_scripts/perl_parser.pl /usr/bin/ && cp /SEAR/SEAR_bin/vcfutils.pl /usr/bin/ && cp /SEAR/Sear.pm /usr/lib/perl5/
+RUN cachebuster=b953b35 git clone git://github.com/wpmr2/SEAR /tmp/SEAR && mv /tmp/SEAR/SEAR.docker_version/SEAR / && cp /tmp/SEAR/SEAR.docker_version/BaseSpace_scripts/perl_parser.pl /usr/bin/ && cp /SEAR/SEAR_bin/vcfutils.pl /usr/bin/ && cp /SEAR/Sear.pm /usr/lib/perl5/
 
 ENV PATH /SEAR:$PATH
 

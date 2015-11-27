@@ -3,3 +3,8 @@ SEAR.docker_version is the SEAR version that is behind the SEAR Illumina BaseSpa
 The docker image can be built using the Dockerfile in the current directory:
 	docker build -t 'sear:basespace' .
 
+Due to licensing issues, USEARCH must be downloaded by the user as it cannot be distributed with SEAR. The user must name the USEARCH executable ‘usearch’ and add it to the docker image (in /usr/bin)
+
+
+
+
