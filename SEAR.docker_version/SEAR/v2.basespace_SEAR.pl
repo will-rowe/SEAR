@@ -401,11 +401,10 @@ finddepth(\&filecheck, "$temp_files_directory/$out_file");
 ## Each split file of fasta reads is clustered against the reference ARG database.
 
 #   for every split file containing fasta reads in the temp directory, run each as separate vsearch against database of reference sequences
-my $vsearch_infile;
 my $counter = 1;
 opendir(INDIR, $temp_files_directory) or die ("$!");
 print "clustering with vsearch . . .\n";
-my $vsearch_command = "vsearch -vsearch_global $temp_files_directory/$vsearch_infile -db $opt_database -id $opt_clustering_identity -strand both -maxhits 1 -threads $opt_threads -uc $temp_files_directory/$counter.vsearchfile.uc -matched $temp_files_directory/$counter.matchedreads -notrunclabels >> $log 2>&1";
+my $vsearch_command = "vsearch --usearch_global $temp_files_directory/$out_file -db $opt_database -id $opt_clustering_identity -strand both -maxhits 1 -threads $opt_threads -uc $temp_files_directory/$counter.vsearchfile.uc -matched $temp_files_directory/$counter.matchedreads -notrunclabels >> $log 2>&1";
 print "$vsearch_command\n";
 system(" $vsearch_command ") == 0 or die ( "Error in vsearch command: $?.\n" );
 unlink("$temp_files_directory/reads.fasta");
