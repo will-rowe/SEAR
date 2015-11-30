@@ -376,55 +376,39 @@ if ($opt_filter_reads =~ m/Z/)
 ## Filter the reads and convert to fasta format.
 #   for each split fastq file, filter reads based on read length, convert to fasta format and load all reads into a single temp file
 my $out_file = "reads.fasta";
+my $counter = 1;
 foreach my $in_file (@opt_inputfiles)
 {
-    my $fastq_command = "vsearch -fastq_filter $in_file -fastq_minlen $opt_length -fastaout $temp_files_directory/$in_file.fasta -notrunclabels -fastq_qmax 100 >> $log 2>&1";
+    my $fastq_command = "vsearch -fastq_filter $in_file -fastq_minlen $opt_length -fastaout $temp_files_directory/$counter.fasta -notrunclabels -fastq_qmax 100 >> $log 2>&1";
     system (" $fastq_command ") == 0 or die ( "\n\nError in converting fastq to fasta format: check input fastq files\n\n" );
-    my $fastareads = "$temp_files_directory/$in_file.fasta";
+    my $fastareads = "$temp_files_directory/$counter.fasta";
     open (READS_IN, $fastareads) or die ("$!");
     open (OUTFILE, ">>$temp_files_directory/$out_file") or die ("$!");
     print OUTFILE <READS_IN>;
     close (OUTFILE);
     close (READS_IN);
-    unlink("$temp_files_directory/$in_file.fasta");
+    unlink("$temp_files_directory/$counter.fasta");
+    $counter ++;
 }
 
 #   check if no reads passed this step
 finddepth(\&filecheck, "$temp_files_directory/$out_file");
-
-#   use system to split the temp file into chunks and then remove temp file
-print "\n\nadding fasta reads to a temporary file . . .\n\nsplitting the temporary file for vsearch . . .\n\n";
-my $split_command2 = "split -a 10 -l 1000000 $temp_files_directory/reads.fasta $temp_files_directory/split";
-system (" $split_command2 ") == 0 or die ( "Can't split temporary file for vsearch: $?.\n" );
-my $bash_command2_part_b = ' do mv "$file" "$file.fasta"; done';
-my $bash_command2 = $bash_command_part_a . $bash_command2_part_b;
-my $fastarename = ` $bash_command2 `;
-unlink("$temp_files_directory/reads.fasta");
 
 
 ############################################################################
 ### vsearch ###
 ############################################################################
 ## Each split file of fasta reads is clustered against the reference ARG database.
-#   set up database file
-print "creating database from reference sequences . . .\n\n";
 
 #   for every split file containing fasta reads in the temp directory, run each as separate vsearch against database of reference sequences
 my $vsearch_infile;
 my $counter = 1;
 opendir(INDIR, $temp_files_directory) or die ("$!");
-print "clustering with vsearch . . .\ncurrent split file:\t";
-while ($vsearch_infile = readdir(INDIR))
-{
-    next unless ($vsearch_infile =~ m/\.fasta$/);
-    my $vsearch_command = "vsearch -vsearch_global $temp_files_directory/$vsearch_infile -db $opt_database -id $opt_clustering_identity -strand both -maxhits 1 -threads $opt_threads -uc $temp_files_directory/$counter.vsearchfile.uc -matched $temp_files_directory/$counter.matchedreads -notrunclabels >> $log 2>&1";
-    print "$counter, ";
-    system(" $vsearch_command ") == 0 or die ( "Error in vsearch command: $?.\n" );
-    my $rm_command = "rm $temp_files_directory/$vsearch_infile";
-    system (" $rm_command ") == 0 or die ("$!");
-    $counter++;
-}
-closedir(INDIR);
+print "clustering with vsearch . . .\n";
+my $vsearch_command = "vsearch -vsearch_global $temp_files_directory/$vsearch_infile -db $opt_database -id $opt_clustering_identity -strand both -maxhits 1 -threads $opt_threads -uc $temp_files_directory/$counter.vsearchfile.uc -matched $temp_files_directory/$counter.matchedreads -notrunclabels >> $log 2>&1";
+print "$vsearch_command\n";
+system(" $vsearch_command ") == 0 or die ( "Error in vsearch command: $?.\n" );
+unlink("$temp_files_directory/reads.fasta");
 
 # combine files containing matched reads
 my $matched_reads_fa = "matched.reads.fa";
