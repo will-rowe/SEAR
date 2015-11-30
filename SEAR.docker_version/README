@@ -1,10 +1,18 @@
-SEAR.docker_version is the SEAR version that is behind the SEAR Illumina BaseSpace App.
+This is the version of the Search Engine for Antimicrobial Resistance (SEAR) that is behind the SEAR BaseSpace App (Illumina).
 
-The docker image can be built using the Dockerfile in the current directory:
+SEAR and it's dependencies can be run using the SEAR docker image.
+
+The docker image can be built using the Dockerfile in the current directory using the following command:
 	docker build -t 'sear:basespace' .
 
-Due to licensing issues, USEARCH must be downloaded by the user as it cannot be distributed with SEAR. The user must name the USEARCH executable ‘usearch’ and add it to the docker image (in /usr/bin)
 
 
 
 
+
+######
+NOTES:
+######
+
+This version of SEAR is being actively developed.
+The free alternative to USEARCH, VSEARCH, has now been implemented in the fastq filtering and clustering stages (used still in other SEAR versions)
