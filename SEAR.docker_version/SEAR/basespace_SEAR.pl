@@ -30,10 +30,10 @@ BEGIN {push @INC, '/SEAR'};
 # Set webaddress for RAC database;
 my $RAC_web_page = "http://rac.aihi.mq.edu.au/rac/feature/list";
 
-# Setup local NCBI blast
-my $blast_update = "update_blastdb --passive --decompress nr nt";
-print "updating BLAST databases (nr and nt) before starting SEAR\n";
-system ( "$blast_update" ) == 0 or die "Can't download and decrompress BLAST databases: $!\n";
+# Setup local NCBI blast - not currently used (remote flag is on in blast commands)
+#my $blast_update = "update_blastdb --passive --decompress nr nt";
+#print "updating BLAST databases (nr and nt) before starting SEAR\n";
+#system ( "$blast_update" ) == 0 or die "Can't download and decrompress BLAST databases: $!\n";
 
 ############################################################################
 ############################################################################
@@ -119,7 +119,7 @@ if (@opt_inputfiles == 0)
 
 =item B<-f/--filter>
  
- filter reads by mapping to a reference genome and discarding mapped reads. Y=Human Genome Z=E.coli genome N=none (default=N)
+ filter reads by mapping to a reference genome and discarding mapped reads. Y==E.coli genome N=none (default=N)
 
 =item B<-cc/--coveragecutoff>
  
@@ -198,8 +198,7 @@ print "\n\n################################################\n";
 print "Search Engine for Antimicrobial Resistance\n";
 print "################################################\nParameters for this SEAR run are as follows:\n";
 print "fastq ascii format: $opt_ascii\n";
-print "filter against Human genome hg19: yes\n" if ($opt_filter_reads =~ m/Y/);
-print "filter against E.coli genome k12: yes\n" if ($opt_filter_reads =~ m/Z/);
+print "filter against E.coli genome k12: yes\n" if ($opt_filter_reads =~ m/Y/);
 print "discard sequences with length < $opt_length bases\n";
 print "read quality cutoff: $opt_quality\n";
 print "clustering identity: $opt_clustering_identity\n";
@@ -216,9 +215,8 @@ foreach my $in_file (@opt_inputfiles)
 foreach my $in_file (@opt_inputfiles)
 {
     next if ($opt_filter_reads =~ m/Y/);
-    next if ($opt_filter_reads =~ m/Z/);
     next if ($opt_filter_reads =~ m/N/);
-    die "\n\nIncorrect SEAR parameter: filter option must either be Y (human genome), Z (e coli K12 genome) or N\n";
+    die "\n\nIncorrect SEAR parameter: filter option must either be Y (e coli K12 genome) or N\n";
 }
 
 my $temp_file_name = int ([Time::HiRes::gettimeofday()] * 1000);
@@ -303,9 +301,9 @@ foreach my $in_file (@opt_inputfiles)
 # Filter reads using Ecoli K12.
 if ($opt_filter_reads =~ m/Y/)
 {
-    # Set up local copy of human genome bwa index
+    # Set up local copy of ecoli genome bwa index
     my $setup_hg = "mv /SEAR/SEAR_DATA/references/EcoliK12.tar.gz $temp_files_directory/ && tar -xvf $temp_files_directory/EcoliK12.tar.gz";
-    system ( "$setup_hg" ) == 0 or die "Can't set up human genome bwa index: $!\n";
+    system ( "$setup_hg" ) == 0 or die "Can't set up ecoli genome bwa index: $!\n";
     my $hg_path = "$temp_files_directory/EcoliK12/E.coli_K_12.fasta";
     
     print "\npreparing to filter reads against Human Genome (Homo_sapiens_UCSC_hg19) in $hg_path . . .\n";
@@ -335,39 +333,7 @@ if ($opt_filter_reads =~ m/Y/)
         finddepth(\&filecheck, "$temp_files_directory/$in_file");
     }
 }
-# Filter reads using K12.
-if ($opt_filter_reads =~ m/Z/)
-{
-    ### To be added: ecoli reference genome
-    my $k12_path = "/";
-    
-    print "\npreparing to filter reads against E.coli Genome (E.coli K12) in $k12_path . . .\n";
-    foreach my $in_file (@opt_inputfiles)
-    {
-        chomp $in_file;
-        print "\nfiltering reads in $in_file . . .\n\n";
-        my $filtered_reads = $in_file . ".filtered.fq";
-        my $bwa_filter_sam_file = "filter_sam_file.sam";
-        my $bwa_filter_bam_file = "filter_bam_file.bam";
-        my $bwa_filtered_reads_bam_file = "filtered_reads.bam";
-        my $bwa_filter_command_1 = "bwa mem -t $opt_threads $k12_path $in_file > $temp_files_directory/$bwa_filter_sam_file";
-        my $bwa_filter_command_2 = "samtools view -bS $temp_files_directory/$bwa_filter_sam_file > $temp_files_directory/$bwa_filter_bam_file";
-        my $bwa_filter_command_3 = "samtools view -b -f4 $temp_files_directory/$bwa_filter_bam_file > $temp_files_directory/$bwa_filtered_reads_bam_file";
-        my $bwa_filter_command_4 = "bam2fastx -q -Q -A -N -o $filtered_reads $temp_files_directory/$bwa_filtered_reads_bam_file";
-        my $bwa_filter_cleanup_command = "rm $temp_files_directory/*.sam && rm $temp_files_directory/*.bam";
-        system ( $bwa_filter_command_1 ) == 0 or die ( "Can't filter $in_file using bwa mem: $?.\n" );
-        system ( $bwa_filter_command_2 ) == 0 or die ( "Can't filter $in_file using bwa mem - can't convert sam > bam: $?.\n" );
-        system ( $bwa_filter_command_3 ) == 0 or die ( "Can't filter $in_file using bwa mem: $?.\n" );
-        system ( $bwa_filter_command_4 ) == 0 or die ( "Can't convert bam > fastq using bma2fastx (tophat): $?.\n" );
-        my $filter_hg_mapped_reads = `samtools view -c -F4 $temp_files_directory/$bwa_filter_bam_file`;
-        my $filter_hg_unmapped_reads = `samtools view -c -f4 $temp_files_directory/$bwa_filter_bam_file`;
-        print "\nnumber of reads mapped to K12: $filter_hg_mapped_reads\nnumber of reads unmapped to k12: $filter_hg_unmapped_reads\nfiltering complete . . . cleaning up files\n";
-        system ( $bwa_filter_cleanup_command ) == 0 or die ( "Can't remove filtering files: $?.\n" );
-        $in_file = "$filtered_reads";
-        #   check if no reads passed this step
-        finddepth(\&filecheck, "$temp_files_directory/$in_file");
-    }
-}
+
 
 ############################################################################
 ### LOAD DATA AND CONVERT ###
@@ -818,10 +784,10 @@ if (%abundance_values)
     my $rac_blast = "$opt_results/BLASTn_RAC_RESULTS.html";
     
     #   remote blastn + blastx at NCBI
-    my $blastn_command = "blastn -db nt -query $opt_results/BLAST_QUERY_SEQUENCES.fasta -out $ncbi_blastn -html -num_threads $opt_threads";
+    my $blastn_command = "blastn -db nt -query $opt_results/BLAST_QUERY_SEQUENCES.fasta -out $ncbi_blastn -html -remote";
     print "$blastn_command\n";
     system ("$blastn_command") == 0 or die "Can't run blastn: $!";
-    my $blastx_command = "blastx -db nr -query $opt_results/BLAST_QUERY_SEQUENCES.fasta -out $ncbi_blastx -html -num_alignments 1 -num_threads $opt_threads";
+    my $blastx_command = "blastx -db nr -query $opt_results/BLAST_QUERY_SEQUENCES.fasta -out $ncbi_blastx -html -num_alignments 1 -remote";
     print "$blastx_command\n";
     system ("$blastx_command") == 0 or die "Can't run blastx: $!";
 
