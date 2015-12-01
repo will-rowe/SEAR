@@ -36,7 +36,10 @@ my $k12_path = "/disk1/SEAR_reference_genomes/EcoliK12/E.coli_K_12.fasta";
 # Set webaddress for RAC database;
 my $RAC_web_page = "http://rac.aihi.mq.edu.au/rac/feature/list";
 
-## Setup local NCBI blast - this is not necessary as SEAR uses the remote service but if you have a local installation you would like to use, please alter lines 368 and 371.
+# Setup local NCBI blast - this is not necessary as SEAR uses the remote service but if you have a local installation you would like to use, please alter lines xxx.
+my $blast_update = "update_blastdb --passive --decompress nr nt";
+print "updating BLAST databases (nr and nt) before starting SEAR\n";
+system ( "$blast_update" ) == 0 or die "Can't download and decrompress BLAST databases: $!\n";
 
 ############################################################################
 ############################################################################
@@ -130,7 +133,7 @@ if (@opt_inputfiles == 0)
  
 =item B<-ci/--clusteringident>
  
- identity value for usearch clustering (default=0.99 (99%))
+ identity value for vsearch clustering (default=0.99 (99%))
  
 =item B<-r/--references>
  
@@ -157,7 +160,7 @@ if (@opt_inputfiles == 0)
 =head1 DEPENDENCIES
  
  perl                   required modules: Getopt::Long, Pod::Usage, Time::HiRes, File::Basename, File::Find, List::Util, LWP::Simple
- usearch
+ vsearch
  bwa
  samtools               incl. bcftools and vcfutils.pl
  ncbiblast
@@ -172,7 +175,7 @@ if (@opt_inputfiles == 0)
 =head1 TESTED
  
  perl       version 5.12.4
- usearch    version 7.0.959
+ vsearch    version 1.9.3
  bwa        version 0.7.8
  samtools   version 0.1.19
  ncbiblast  version 2.2.28+
@@ -373,92 +376,40 @@ if ($opt_filter_reads =~ m/Z/)
 ############################################################################
 ### LOAD DATA AND CONVERT ###
 ############################################################################
-## Split input fastq file/s, filter the reads and convert to fasta format.
-#   read in fasta reads to a temporary file and split temp file into chunks for usearch
+## Filter the reads and convert to fasta format.
+#   for each split fastq file, filter reads based on read length, convert to fasta format and load all reads into a single temp file
 my $out_file = "reads.fasta";
-my $split_counter = 1;
-my $input_counter = 1;
-my $fastq_split;
+my $counter = 1;
 foreach my $in_file (@opt_inputfiles)
 {
-    chomp $in_file;
-    print "\nsplitting infile: $in_file for usearch fastq_filter\n";
-    my $split_command = "split -a 10 -l 4000000 $in_file $temp_files_directory/split.$split_counter";
-    system ( $split_command ) == 0 or die ( "Can't split input fastq files for usearch: $?.\n" );
-    $split_counter++;
-}
-my $bash_command_part_a = "for file in $temp_files_directory/split*;";
-my $bash_command_part_b = ' do mv "$file" "$file.fastq"; done';
-my $bash_command = $bash_command_part_a . $bash_command_part_b;
-my $fastqrename = ` $bash_command `;
-
-#   for each split fastq file, filter reads based on read length, convert to fasta format and load all reads into a single temp file
-opendir (TEMPDIR, $temp_files_directory) or die ("$!");
-print "\nquality checking and converting fastq reads to fasta format using usearch fastq_filter . . .\ncurrent split file:\t";
-while ($fastq_split = readdir(TEMPDIR))
-{
-    next unless ($fastq_split =~ m/\.fastq$/);
-    print "$input_counter, ";
-    my $fastq_command = "usearch -fastq_filter $temp_files_directory/$fastq_split -fastq_minlen $opt_length -fastaout $temp_files_directory/$input_counter.fasta -notrunclabels >> $log 2>&1";
+    my $fastq_command = "vsearch -fastq_filter $in_file -fastq_minlen $opt_length -fastaout $temp_files_directory/$counter.fasta -notrunclabels -fastq_qmax 100 >> $log 2>&1";
     system (" $fastq_command ") == 0 or die ( "\n\nError in converting fastq to fasta format: check input fastq files\n\n" );
-    my $fastareads = "$temp_files_directory/$input_counter.fasta";
+    my $fastareads = "$temp_files_directory/$counter.fasta";
     open (READS_IN, $fastareads) or die ("$!");
     open (OUTFILE, ">>$temp_files_directory/$out_file") or die ("$!");
     print OUTFILE <READS_IN>;
     close (OUTFILE);
     close (READS_IN);
-    unlink("$temp_files_directory/$input_counter.fasta");
-    unlink("$temp_files_directory/$fastq_split");
-    $input_counter++;
+    unlink("$temp_files_directory/$counter.fasta");
+    $counter ++;
 }
-close TEMPDIR;
 
 #   check if no reads passed this step
 finddepth(\&filecheck, "$temp_files_directory/$out_file");
 
-#   use system to split the temp file into chunks and then remove temp file
-print "\n\nadding fasta reads to a temporary file . . .\n\nsplitting the temporary file for usearch . . .\n\n";
-my $split_command2 = "split -a 10 -l 1000000 $temp_files_directory/reads.fasta $temp_files_directory/split";
-system (" $split_command2 ") == 0 or die ( "Can't split temporary file for usearch: $?.\n" );
-my $bash_command2_part_b = ' do mv "$file" "$file.fasta"; done';
-my $bash_command2 = $bash_command_part_a . $bash_command2_part_b;
-my $fastarename = ` $bash_command2 `;
-unlink("$temp_files_directory/reads.fasta");
-
 
 ############################################################################
-### USEARCH ###
+### vsearch ###
 ############################################################################
 ## Each split file of fasta reads is clustered against the reference ARG database.
-#   set up database file
-my $reference_args_udb = "database.udb";
-my $create_udb_database_command = "usearch -makeudb_usearch $opt_database -output $temp_files_directory/$reference_args_udb >> $log 2>&1";
-print "creating database from reference sequences . . .\n\n";
-system (" $create_udb_database_command ") == 0 or die ("Can't create .udb file from reference sequences: $!\n");
-
-#   for every split file containing fasta reads in the temp directory, run each as separate usearch against database of reference sequences
-my $usearch_infile;
-my $counter = 1;
+#   for every split file containing fasta reads in the temp directory, run each as separate vsearch against database of reference sequences
 opendir(INDIR, $temp_files_directory) or die ("$!");
-print "clustering with usearch . . .\ncurrent split file:\t";
-while ($usearch_infile = readdir(INDIR))
-{
-    next unless ($usearch_infile =~ m/\.fasta$/);
-    my $usearch_command = "usearch -usearch_global $temp_files_directory/$usearch_infile -db $temp_files_directory/$reference_args_udb -id $opt_clustering_identity -strand both -maxhits 1 -threads $opt_threads -uc $temp_files_directory/$counter.usearchfile.uc -matched $temp_files_directory/$counter.matchedreads -notrunclabels >> $log 2>&1";
-    print "$counter, ";
-    system(" $usearch_command ") == 0 or die ( "Error in usearch command: $?.\n" );
-    my $rm_command = "rm $temp_files_directory/$usearch_infile";
-    system (" $rm_command ") == 0 or die ("$!");
-    $counter++;
-}
-closedir(INDIR);
-
-# combine files containing matched reads
+print "clustering with vsearch . . .\n";
 my $matched_reads_fa = "matched.reads.fa";
-my $cat_command = "cat $temp_files_directory/*.matchedreads > $temp_files_directory/$matched_reads_fa";
-my $cleanup4 = "rm $temp_files_directory/*.matchedreads";
-system (" $cat_command ") == 0 or die ("$!");
-system (" $cleanup4 ") == 0 or die ("$!");
+my $vsearch_command = "vsearch --usearch_global $temp_files_directory/$out_file --db $opt_database --id $opt_clustering_identity --strand both --maxhits 1 --threads $opt_threads --uc $temp_files_directory/vsearchfile.uc --matched $temp_files_directory/$matched_reads_fa --notrunclabels --top_hits_only --query_cov 0.7 >> $log 2>&1";
+print "$vsearch_command\n";
+system(" $vsearch_command ") == 0 or die ( "Error in vsearch command: $?.\n" );
+unlink("$temp_files_directory/reads.fasta");
 
 #   check if no reads passed this step
 finddepth(\&filecheck, "$temp_files_directory/$matched_reads_fa");
@@ -467,48 +418,41 @@ finddepth(\&filecheck, "$temp_files_directory/$matched_reads_fa");
 ############################################################################
 ### PARSING ###
 ############################################################################
-##  Each usearch output file is searched through and hits are removed and placed in a new file.
+##  Each vsearch output file is searched through and hits are removed and placed in a new file.
 #   declarations for PARSING
-my $usearch_outfile;
-my @usearch_hits;
+my $vsearch_outfile;
+my @vsearch_hits;
 my @rearranged_output;
-my $usearch_hits = "usearch_hits.txt";
+my $vsearch_hits = "vsearch_hits.txt";
 
-#    for every usearch output file (.uc) in the temp directory, remove any line that begins with H (denotes hit) and push line to an array
-print "\nparsing usearch output . . .\n";
-opendir(INDIR, $temp_files_directory) or die ("$!");
-while ($usearch_outfile = readdir(INDIR))
+#    for vsearch output file (.uc) in the temp directory, remove any line that begins with H (denotes hit) and push line to an array
+print "\nparsing vsearch output . . .\n";
+open (vsearch_OUTPUT, "<$temp_files_directory/vsearchfile.uc") or die ("$!");
+my @vsearch_output_lines = <vsearch_OUTPUT>;
+close vsearch_OUTPUT;
+foreach my $vsearch_line (@vsearch_output_lines)
 {
-    next unless ($usearch_outfile =~ m/\.uc$/);
-    open (USEARCH_OUTPUT, "<$temp_files_directory/$usearch_outfile") or die ("$!");
-    my @usearch_output_lines = <USEARCH_OUTPUT>;
-    close USEARCH_OUTPUT;
-    foreach my $usearch_line (@usearch_output_lines)
-    {
-        if ($usearch_line =~ m/^H/)
-        {
-            push (@usearch_hits, $usearch_line);
-        }
-    }
+	chomp $vsearch_line;
+	if ($vsearch_line =~ m/^H/)
+	{
+		push (@vsearch_hits, $vsearch_line);
+	}
 }
-closedir(INDIR);
-my $cleanup5 = "rm $temp_files_directory/*.uc";
-system ( $cleanup5 ) == 0 or die ("$!");
-foreach my $usearch_hit (@usearch_hits)
+foreach my $vsearch_hit (@vsearch_hits)
 {
-    chomp $usearch_hit;
-    my $usearch_line =  (join "\t", reverse split /\t/, $usearch_hit) . "\n";
-    $usearch_line =~ s/^Cluster//;
-    push (@rearranged_output, $usearch_line);
+    $vsearch_hit =~ s/\s/\t/g;
+    print "$vsearch_hit";
+    my $vsearch_line =  (join "\t", reverse split /\t/, $vsearch_hit) . "\n";
+    push (@rearranged_output, $vsearch_line);
 }
 
 #   the array containing hits is then sorted according to ascending cluster number
-my @sorted_usearch_hits = sort { (split ' ', $a)[0] cmp (split ' ', $b)[0] } @rearranged_output;
-print "\ncreating usearch_hits.txt and cleaning up temp files . . .\n";
-open (OUTFILE, ">$temp_files_directory/$usearch_hits") or die ("$!");
-foreach my $sorted_usearch_hit (@sorted_usearch_hits)
+my @sorted_vsearch_hits = sort { (split ' ', $a)[0] cmp (split ' ', $b)[0] } @rearranged_output;
+print "\ncreating vsearch_hits.txt and cleaning up temp files . . .\n";
+open (OUTFILE, ">$temp_files_directory/$vsearch_hits") or die ("$!");
+foreach my $sorted_vsearch_hit (@sorted_vsearch_hits)
 {
-    print OUTFILE ("$sorted_usearch_hit");
+    print OUTFILE ("$sorted_vsearch_hit");
 }
 close (OUTFILE) or die ("$!");
 
@@ -516,7 +460,7 @@ close (OUTFILE) or die ("$!");
 ############################################################################
 ### FASTQ LOOKUP ###
 ############################################################################
-## The matched fasta reads (matched.reads.fa) from usearch are used to look up the original fastq reads for use in the mapping stage.
+## The matched fasta reads (matched.reads.fa) from vsearch are used to look up the original fastq reads for use in the mapping stage.
 #   the header of each matched read is used to retrieve the original fastq read
 #   declarations for FASTQ LOOKUP
 my @strippedreads;
@@ -613,11 +557,11 @@ close MATCHEDREADS;
 ############################################################################
 ### CLUSTER DIRECTORIES ###
 ############################################################################
-## Each reference sequence that received hits during USEARCH has a directory created in the temp directory containing the fastq reads that matched the reference sequence.
-#   reopen usearch hits, load columns into an array, if cluster number is duplicated condense the cluster to have all reads on one line
-open(USEARCH_HITS, "<$temp_files_directory/$usearch_hits") or die ("$!");
+## Each reference sequence that received hits during vsearch has a directory created in the temp directory containing the fastq reads that matched the reference sequence.
+#   reopen vsearch hits, load columns into an array, if cluster number is duplicated condense the cluster to have all reads on one line
+open(vsearch_HITS, "<$temp_files_directory/$vsearch_hits") or die ("$!");
 my %info = ();
-while (<USEARCH_HITS>)
+while (<vsearch_HITS>)
 {
     my @columns = split /\t+/;
     if ( exists $info{ $columns[0] } )
@@ -628,7 +572,7 @@ while (<USEARCH_HITS>)
         $info{ $columns[0] } = { C2 =>[ $columns[1] ] }
     }
 }
-close (USEARCH_HITS) or die ("$!");
+close (vsearch_HITS) or die ("$!");
 
 #   create new directory for every cluster that received hits, then to each directory add text file containing the fastq headings of sequences that hit that cluster
 print "creating directories for reference sequence database hits and adding reads to directories . . .\n";
@@ -879,10 +823,10 @@ if (%abundance_values)
     my $rac_blast = "$opt_results/BLASTn_RAC_RESULTS.html";
     
     #   remote blastn + blastx at NCBI
-    my $blastn_command = "blastn -db nt -query $opt_results/BLAST_QUERY_SEQUENCES.fasta -out $ncbi_blastn -html -remote";
+    my $blastn_command = "blastn -db nt -query $opt_results/BLAST_QUERY_SEQUENCES.fasta -out $ncbi_blastn -html -num_threads $opt_threads";
     print "$blastn_command\n";
     system ("$blastn_command") == 0 or die "Can't run blastn: $!";
-    my $blastx_command = "blastx -db nr -query $opt_results/BLAST_QUERY_SEQUENCES.fasta -out $ncbi_blastx -html -num_alignments 1 -remote";
+    my $blastx_command = "blastx -db nr -query $opt_results/BLAST_QUERY_SEQUENCES.fasta -out $ncbi_blastx -html -num_alignments 1 -num_threads $opt_threads";
     print "$blastx_command\n";
     system ("$blastx_command") == 0 or die "Can't run blastx: $!";
 
