@@ -27,17 +27,6 @@ BEGIN {push @INC, '/SEAR'};
 ############################################################################
 ### SET PATHS FOR SERVER ###
 ############################################################################
-
-# Set up local copy of human genome bwa index
-my $get_hg = "curl --remote-name ftp://ftp-trace.ncbi.nih.gov/1000genomes/ftp/technical/reference/human_g1k_v37.fasta.gz";
-my $build_hg_index = "bwa index human_g1k_v37.fasta.gz";
-print "updating reference genomes before starting SEAR\n";
-system ( "$get_hg && $build_hg_index" ) == 0 or die "Can't download and decrompress BLAST databases: $!\n";
-my $hg_path = "/human_g1k_v37.fasta.gz";
-
-### To be added: ecoli reference genome
-my $k12_path = "/";
-
 # Set webaddress for RAC database;
 my $RAC_web_page = "http://rac.aihi.mq.edu.au/rac/feature/list";
 
@@ -311,10 +300,14 @@ foreach my $in_file (@opt_inputfiles)
 ############################################################################
 ### REMOVE CONTAMINATION ###
 ############################################################################
-# Filter reads using HG19.
-###   (//ADD COMMENT// SUITABILITY FOR REMOVING FALSE POSITIVES)
+# Filter reads using Ecoli K12.
 if ($opt_filter_reads =~ m/Y/)
 {
+    # Set up local copy of human genome bwa index
+    my $setup_hg = "mv /SEAR/SEAR_DATA/references/EcoliK12.tar.gz $temp_files_directory/ && tar -xvf $temp_files_directory/EcoliK12.tar.gz";
+    system ( "$setup_hg" ) == 0 or die "Can't set up human genome bwa index: $!\n";
+    my $hg_path = "$temp_files_directory/EcoliK12/E.coli_K_12.fasta";
+    
     print "\npreparing to filter reads against Human Genome (Homo_sapiens_UCSC_hg19) in $hg_path . . .\n";
     foreach my $in_file (@opt_inputfiles)
     {
@@ -345,6 +338,9 @@ if ($opt_filter_reads =~ m/Y/)
 # Filter reads using K12.
 if ($opt_filter_reads =~ m/Z/)
 {
+    ### To be added: ecoli reference genome
+    my $k12_path = "/";
+    
     print "\npreparing to filter reads against E.coli Genome (E.coli K12) in $k12_path . . .\n";
     foreach my $in_file (@opt_inputfiles)
     {
