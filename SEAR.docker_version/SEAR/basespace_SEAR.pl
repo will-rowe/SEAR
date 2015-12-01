@@ -27,16 +27,21 @@ BEGIN {push @INC, '/SEAR'};
 ############################################################################
 ### SET PATHS FOR SERVER ###
 ############################################################################
-# Set path to the SEAR_DATA working directory. The directory must be named: SEAR_DATA and have sufficient memory allocation.
-#my $SEAR_DATA_directory = "./SEAR_DATA"; ###THIS HAS BEEN MOVED TO A COMMANDLINE OPTION FOR THE BASEPSACE VERSION, CONSEQUENTLY THE DB SELECTION HAS ALSO BEEN MOVED
-# If using the 'remove read contamination feature', set path to the Human Genome BWAIndex
-my $hg_path = "/disk1/Homo_sapiens/Ensembl/GRCh37/Sequence/BWAIndex/genome.fa";
-# If using the 'remove read contamination feature', set path to the Ecoli K12 BWAIndex
-my $k12_path = "/disk1/SEAR_reference_genomes/EcoliK12/E.coli_K_12.fasta";
+
+# Set up local copy of human genome bwa index
+my $get_hg = "curl --remote-name ftp://ftp-trace.ncbi.nih.gov/1000genomes/ftp/technical/reference/human_g1k_v37.fasta.gz";
+my $build_hg_index = "bwa index human_g1k_v37.fasta.gz";
+print "updating reference genomes before starting SEAR\n";
+system ( "$get_hg && $build_hg_index" ) == 0 or die "Can't download and decrompress BLAST databases: $!\n";
+my $hg_path = "/human_g1k_v37.fasta.gz";
+
+### To be added: ecoli reference genome
+my $k12_path = "/";
+
 # Set webaddress for RAC database;
 my $RAC_web_page = "http://rac.aihi.mq.edu.au/rac/feature/list";
 
-# Setup local NCBI blast - this is not necessary as SEAR uses the remote service but if you have a local installation you would like to use, please alter lines xxx.
+# Setup local NCBI blast
 my $blast_update = "update_blastdb --passive --decompress nr nt";
 print "updating BLAST databases (nr and nt) before starting SEAR\n";
 system ( "$blast_update" ) == 0 or die "Can't download and decrompress BLAST databases: $!\n";
@@ -57,7 +62,7 @@ my $opt_ascii = 33;
 my $opt_length = 70;
 my $opt_quality = 20;
 my $opt_coverage = 90;
-my $opt_filter_reads = "N";
+my $opt_filter_reads = "Y";
 my $opt_clustering_identity = "0.99";
 my $SEAR_DATA_directory = "./SEAR_DATA";
 my $project_output = "0000";
@@ -194,10 +199,11 @@ if (@opt_inputfiles == 0)
  
 =cut
 
-my $opt_database = "$SEAR_DATA_directory/references/database/arg_annot_database.fa";
+
 ############################################################################
 ### PROCESS INPUT FILES AND SET UP FILES ###
 ############################################################################
+my $opt_database = "$SEAR_DATA_directory/references/database/arg_annot_database.fa";
 my $start_time = [Time::HiRes::gettimeofday()];
 print "\n\n################################################\n";
 print "Search Engine for Antimicrobial Resistance\n";
@@ -223,7 +229,7 @@ foreach my $in_file (@opt_inputfiles)
     next if ($opt_filter_reads =~ m/Y/);
     next if ($opt_filter_reads =~ m/Z/);
     next if ($opt_filter_reads =~ m/N/);
-    die "\n\nIncorrect SEAR parameter: filter option must either be Y, Z or N\n";
+    die "\n\nIncorrect SEAR parameter: filter option must either be Y (human genome), Z (e coli K12 genome) or N\n";
 }
 
 my $temp_file_name = int ([Time::HiRes::gettimeofday()] * 1000);
@@ -242,7 +248,7 @@ foreach my $in_file (@opt_inputfiles)
 print "\n################################################\n";
 print "Starting main SEAR program\n";
 print "################################################\n";
-#   set up files
+# Set up files
 my $log = "$temp_files_directory/log.txt";
 
 # Check if project id exists in data/output
@@ -252,13 +258,7 @@ eval { make_path($dir) };
 if ($@) {
   print "Couldn't create $dir: $@";
 }
-
-
-### RESULTS DIRECTORY HAS BEEN CHANGED FOR BASESPACE
 my $opt_results = $dir . "/SEAR_RESULTS_$temp_file_name";
-
-
-
 my $multifastq = "consensus_seqs.fq";
 system ( "mkdir -p $temp_files_directory" ) == 0 or die ( "Can't make temporary files directory: $?.\n" );
 system ( "touch $log" ) == 0 or die ( "Can't create log file: $?.\n" );
@@ -403,7 +403,6 @@ finddepth(\&filecheck, "$temp_files_directory/$out_file");
 ############################################################################
 ## Each split file of fasta reads is clustered against the reference ARG database.
 #   for every split file containing fasta reads in the temp directory, run each as separate vsearch against database of reference sequences
-opendir(INDIR, $temp_files_directory) or die ("$!");
 print "clustering with vsearch . . .\n";
 my $matched_reads_fa = "matched.reads.fa";
 my $vsearch_command = "vsearch --usearch_global $temp_files_directory/$out_file --db $opt_database --id $opt_clustering_identity --strand both --maxhits 1 --threads $opt_threads --uc $temp_files_directory/vsearchfile.uc --matched $temp_files_directory/$matched_reads_fa --notrunclabels --top_hits_only --query_cov 0.7 >> $log 2>&1";
