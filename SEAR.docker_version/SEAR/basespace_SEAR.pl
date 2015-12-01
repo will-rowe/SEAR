@@ -30,7 +30,7 @@ BEGIN {push @INC, '/SEAR'};
 # Set webaddress for RAC database;
 my $RAC_web_page = "http://rac.aihi.mq.edu.au/rac/feature/list";
 
-# Setup local NCBI blast - not currently used (remote flag is on in blast commands)
+# Setup local NCBI blast - not currently used (remote flag is on in NCBI blast commands)
 #my $blast_update = "update_blastdb --passive --decompress nr nt";
 #print "updating BLAST databases (nr and nt) before starting SEAR\n";
 #system ( "$blast_update" ) == 0 or die "Can't download and decrompress BLAST databases: $!\n";
@@ -302,10 +302,9 @@ foreach my $in_file (@opt_inputfiles)
 if ($opt_filter_reads =~ m/Y/)
 {
     # Set up local copy of ecoli genome bwa index
-    my $setup_hg = "mv /SEAR/SEAR_DATA/references/EcoliK12.tar.gz $temp_files_directory/ && tar -xvf $temp_files_directory/EcoliK12.tar.gz";
+    my $setup_hg = "cp /SEAR/SEAR_DATA/references/EcoliK12.tar.gz $temp_files_directory/ && tar -xvf $temp_files_directory/EcoliK12.tar.gz -C $temp_files_directory/";
     system ( "$setup_hg" ) == 0 or die "Can't set up ecoli genome bwa index: $!\n";
     my $hg_path = "$temp_files_directory/EcoliK12/E.coli_K_12.fasta";
-    
     print "\npreparing to filter reads against Human Genome (Homo_sapiens_UCSC_hg19) in $hg_path . . .\n";
     foreach my $in_file (@opt_inputfiles)
     {
@@ -326,7 +325,7 @@ if ($opt_filter_reads =~ m/Y/)
         system ( $bwa_filter_command_4 ) == 0 or die ( "Can't convert bam > fastq using bma2fastx (tophat): $?.\n" );
         my $filter_hg_mapped_reads = `samtools view -c -F4 $temp_files_directory/$bwa_filter_bam_file`;
         my $filter_hg_unmapped_reads = `samtools view -c -f4 $temp_files_directory/$bwa_filter_bam_file`;
-        print "\nnumber of reads mapped to hg19: $filter_hg_mapped_reads\nnumber of reads unmapped to hg19: $filter_hg_unmapped_reads\nfiltering complete . . . cleaning up files\n";
+        print "\nnumber of reads mapped to hg19: $filter_hg_mapped_reads\nnumber of reads unmapped to hg19: $filter_hg_unmapped_reads\nfiltering complete . . .\n";
         system ( $bwa_filter_cleanup_command ) == 0 or die ( "Can't remove filtering files: $?.\n" );
         $in_file = "$filtered_reads";
         #   check if no reads passed this step
