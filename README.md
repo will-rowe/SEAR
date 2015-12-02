@@ -31,17 +31,17 @@ Alternatively, the container image can be built using the Dockerfile in SEAR.doc
 
 There are several versions of SEAR available:
 
-### SEAR App on BaseSpace
+### 1.	SEAR App on BaseSpace
 
 As of xx.xx.xxxx, SEAR is available as an App on the Illumina BaseSpace analysis platform.
 
 Link here: [SEAR BaseSpace App](www.google.com).
 
 
-### SEAR.docker_version
+### 2.	SEAR.docker_version
 
 
-### SEAR.command_line_version
+### 3.	SEAR.command_line_version
 
 
 
