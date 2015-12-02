@@ -1,16 +1,24 @@
-################################################################################
-########## SEARCH ENGINE FOR ANTIMICROBIAL RESISTANCE ##########
-################################################################################
-This is the commandline version of SEAR.
+## SEAR
+
+This is the original commandline version of SEAR, associated with the publication (http://doi.org/10.1371/journal.pone.0133492).
+
+This version differs from the Docker version in several ways (such as using USEARCH, rather than the open source VSEARCH). This version is due to be updated to mirror the Docker version.
+
+# Introduction
+
 SEAR annotates antimicrobial resistance genes (ARGs) from short read, metagenomic datasets.
+
 SEAR calls on several pieces of software.
+
 The results list the annotated ARGs, the relative abundance of each ARG, the consensus sequence for the annotated ARG and links to BLAST results and further information on several online databases.
+
 It is recommended to leave the SEAR directories and files in situ within the ./SEAR_commandline_version directory.
+
 SEAR uses the remote NCBI BLAST service. To speed up SEAR, you can choose to use a local install of NCBI BLAST. Please refer to the commandline_sear.pl to change from the remote BLAST service.
 
-################################################################################
-########## SEAR SETUP INSTRUCTIONS ##########
-################################################################################
+
+# Setup Instructions
+
 1.  Set up the SEAR_bin by following the 2_README.md file in ./SEAR_bin to install the required software and setup the correct executables in the SEAR_bin. 
 
 2.  Open commandline_SEAR.pl in an editor and input the SEAR SETTINGS for your system (giving complete paths).
@@ -30,9 +38,8 @@ SEAR uses the remote NCBI BLAST service. To speed up SEAR, you can choose to use
 4.  Give the SEAR_DATA directory and commandline_SEAR.pl program read, write and execute rights (use chmod).
 
 
-################################################################################
-########## SEAR MANUAL ##########
-################################################################################
+# Manual
+
 NAME
     SEAR:   Search Engine for Antimicrobial Resistance   (version 0.1)
 
