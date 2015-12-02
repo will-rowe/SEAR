@@ -10,6 +10,8 @@ SEAR has been designed with environmental metagenomics / microbiome experiments 
 The paper describing the design and implementation of SEAR has been published in [PLoS ONE](http://doi.org/10.1371/journal.pone.0133492).
 
 
+
+
 ## Update
 
 The server that hosts SEAR is being retired. Consequently, a Docker container image has been created and it is the easiest way to run SEAR yourself.
@@ -21,6 +23,8 @@ This image can be pulled from [Docker](https://hub.docker.com/r/wpmr/sear/):
 Alternatively, the container image can be built using the Dockerfile in SEAR.docker_version:
 
 `docker build -t 'docker:sear' .`
+
+
 
 
 ## Versions
@@ -38,6 +42,8 @@ Link here: [SEAR BaseSpace App](www.google.com).
 
 
 ### SEAR.command_line_version
+
+
 
 
 ## Contact
