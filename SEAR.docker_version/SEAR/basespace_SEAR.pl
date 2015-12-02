@@ -349,7 +349,7 @@ my $out_file = "reads.fasta";
 my $counter = 1;
 foreach my $in_file (@opt_inputfiles)
 {
-    my $fastq_command = "vsearch -fastq_filter $in_file -fastq_minlen $opt_length -fastaout $temp_files_directory/$counter.fasta -notrunclabels -fastq_qmax 100 >> $log 2>&1";
+    my $fastq_command = "vsearch -fastq_filter $in_file -fastq_minlen $opt_length -fastaout $temp_files_directory/$counter.fasta -notrunclabels -fastq_qmax 100 -threads $opt_threads >> $log 2>&1";
     system (" $fastq_command ") == 0 or die ( "\n\nError in converting fastq to fasta format: check input fastq files\n\n" );
     my $fastareads = "$temp_files_directory/$counter.fasta";
     open (READS_IN, $fastareads) or die ("$!");
