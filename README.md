@@ -25,26 +25,26 @@ There are several versions of SEAR available:
 
 ### 1.	SEAR App on BaseSpace
 
-    -   As of xx.xx.xxxx, SEAR is available as an App on the Illumina BaseSpace analysis platform.
+    As of xx.xx.xxxx, SEAR is available as an App on the Illumina BaseSpace analysis platform.
 
-    -   Link here: [SEAR BaseSpace App](www.google.com).
+    Link here: [SEAR BaseSpace App](www.google.com).
 
 
 ### 2.	SEAR.docker_version
 
-    -   The docker version of SEAR is the version behind the SEAR App. This version of SEAR runs using a 'Docker container' and will have all the required software and dependencies to run properly.
+    The docker version of SEAR is the version behind the SEAR App. This version of SEAR runs using a 'Docker container' and will have all the required software and dependencies to run properly.
 
-    -   A user can use the SEAR container on a local machine and run SEAR as they would a command line script. 
+    A user can use the SEAR container on a local machine and run SEAR as they would a command line script. 
 
-    -   Alternatively, the SEAR container can be run on a server (as in the App version, which uses Amazon cloud servers).
+    Alternatively, the SEAR container can be run on a server (as in the App version, which uses Amazon cloud servers).
 
-    -   An introduction to Docker can be found [here](https://training.docker.com/).
+    An introduction to Docker can be found [here](https://training.docker.com/).
 
-    -   The SEAR container image can be pulled directly from the [Docker Hub](https://hub.docker.com/r/wpmr/sear/):
+    The SEAR container image can be pulled directly from the [Docker Hub](https://hub.docker.com/r/wpmr/sear/):
 
         `docker pull wpmr/sear`
 
-    -   Alternatively, the SEAR container image can be built using the Dockerfile in SEAR.docker_version:
+    Alternatively, the SEAR container image can be built using the Dockerfile in SEAR.docker_version:
 
         `docker build -t 'docker:sear' .`
 
@@ -52,9 +52,9 @@ There are several versions of SEAR available:
 
 ### 3.	SEAR.command_line_version
 
-    -   The original version of SEAR is still available. This is the command line version which requires the user to set up all the required dependencies. It also requires USEARCH still, unlike the other SEAR versions that now use VSEARCH (an open source alternative to USEARCH).
+    The original version of SEAR is still available. This is the command line version which requires the user to set up all the required dependencies. It also requires USEARCH still, unlike the other SEAR versions that now use VSEARCH (an open source alternative to USEARCH).
 
-    -   The README.md file in SEAR.command_line_version explains how to set up this version of SEAR.
+    The README.md file in SEAR.command_line_version explains how to set up this version of SEAR.
 
 
 
