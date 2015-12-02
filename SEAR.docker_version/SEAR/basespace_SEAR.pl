@@ -266,7 +266,7 @@ foreach my $in_file (@opt_inputfiles)
 
 
 ############################################################################
-### ADD FASTQ TAGS ###
+### ADD FASTQ TAGS AND REMOVE WHITE SPACE ###
 ############################################################################
 my $read_tag_counter = 1;
 my @parsed_input_filenames;
@@ -285,7 +285,12 @@ foreach my $in_file (@opt_inputfiles)
     close INFILE;
     foreach my $in_file_line (@in_file_lines)
     {
-        $in_file_line =~ s/$read_substr/$read_tag/g;
+        if ($in_file_line =~ m/$read_substr/g)
+	{
+		$in_file_line =~ s/$read_substr/$read_tag/g;
+		$in_file_line =~ s/\s//g;
+		$in_file_line .= "\n";
+    	}
     }
     open OUTFILE, ">$tagged_in_file" or die "Can't open $tagged_in_file for writing tagged infiles: $!";
     print OUTFILE @in_file_lines;
@@ -339,6 +344,7 @@ if ($opt_filter_reads =~ m/Y/)
 ############################################################################
 ## Filter the reads and convert to fasta format.
 #   for each split fastq file, filter reads based on read length, convert to fasta format and load all reads into a single temp file
+print "quality checking and converting to FASTA with vsearch . . .\n";
 my $out_file = "reads.fasta";
 my $counter = 1;
 foreach my $in_file (@opt_inputfiles)
@@ -401,7 +407,6 @@ foreach my $vsearch_line (@vsearch_output_lines)
 foreach my $vsearch_hit (@vsearch_hits)
 {
     $vsearch_hit =~ s/\s/\t/g;
-    print "$vsearch_hit";
     my $vsearch_line =  (join "\t", reverse split /\t/, $vsearch_hit) . "\n";
     push (@rearranged_output, $vsearch_line);
 }
