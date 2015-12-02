@@ -1,9 +1,9 @@
 # SEAR: Search Engine for Antimicrobial Resistance
 
 
-## General update (1.12.2015)
+## General updates
 
-The server that hosts SEAR is being retired. Consequently, a Docker container image has been created and it is the easiest way to run SEAR yourself.
+    1.12.2015 -   The server that hosts SEAR is being retired. Consequently, a Docker container image has been created and it is the easiest way to run SEAR yourself.
 
 
 
@@ -14,7 +14,7 @@ The aim of this project is to provide an easy to use tool that can construct ful
 
 SEAR has been designed with environmental metagenomics / microbiome experiments in mind, where the diversity and relative abundance of ARGs would like to be determined both quickly and easily.
 
-The paper describing the design and implementation of SEAR has been published in [PLoS ONE](http://doi.org/10.1371/journal.pone.0133492).
+A paper describing the design and implementation of SEAR has been published in [PLoS ONE](http://doi.org/10.1371/journal.pone.0133492).
 
 
 
