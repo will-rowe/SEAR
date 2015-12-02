@@ -1,5 +1,4 @@
-# This Dockerfile is used to build the SEAR docker image for the BaseSpace App.
-# Due to licensing issues, USEARCH must be downloaded by the user as it cannot be distributed with SEAR. The user must name the USEARCH executable ‘usearch’ and add it to the docker image (in /usr/bin).
+# This Dockerfile is used to build the SEAR docker image.
 
 FROM ubuntu:14.04
 MAINTAINER Will Rowe <wpmr2@cam.ac.uk>
