@@ -364,18 +364,44 @@ foreach my $in_file (@opt_inputfiles)
 #   check if no reads passed this step
 finddepth(\&filecheck, "$temp_files_directory/$out_file");
 
+#   use system to split the temp file into chunks and then remove temp file
+print "\n\nadding fasta reads to a temporary file . . .\n\nsplitting the temporary file for vsearch . . .\n\n";
+my $split_command2 = "split -a 10 -l 1000000 $temp_files_directory/reads.fasta $temp_files_directory/split";
+system (" $split_command2 ") == 0 or die ( "Can't split temporary file for vsearch: $?.\n" );
+my $bash_command_part_a = "for file in $temp_files_directory/split*;";
+my $bash_command_part_b = ' do mv "$file" "$file.fasta"; done';
+my $bash_command2 = $bash_command_part_a . $bash_command_part_b;
+my $fastarename = ` $bash_command2 `;
+unlink("$temp_files_directory/reads.fasta");
+
 
 ############################################################################
 ### vsearch ###
 ############################################################################
 ## Each split file of fasta reads is clustered against the reference ARG database.
 #   for every split file containing fasta reads in the temp directory, run each as separate vsearch against database of reference sequences
-print "clustering with vsearch . . .\n";
+my $vsearch_infile;
+$counter = 1;
+opendir(INDIR, $temp_files_directory) or die ("$!");
+print "clustering with vsearch . . .\ncurrent split file:\t";
+while ($vsearch_infile = readdir(INDIR))
+{
+    next unless ($vsearch_infile =~ m/\.fasta$/);
+    my $vsearch_command = "vsearch --usearch_global $temp_files_directory/$vsearch_infile --db $opt_database --id $opt_clustering_identity --strand both --maxhits 1 --threads $opt_threads --uc $temp_files_directory/$counter.vsearchfile.uc --matched $temp_files_directory/$counter.matchedreads --notrunclabels --top_hits_only --query_cov 0.7 >> $log 2>&1";
+    print "$counter, ";
+    system(" $vsearch_command ") == 0 or die ( "Error in vsearch command: $?.\n" );
+    my $rm_command = "rm $temp_files_directory/$vsearch_infile";
+    system (" $rm_command ") == 0 or die ("$!");
+    $counter++;
+}
+closedir(INDIR);
+
+# combine files containing matched reads
 my $matched_reads_fa = "matched.reads.fa";
-my $vsearch_command = "vsearch --usearch_global $temp_files_directory/$out_file --db $opt_database --id $opt_clustering_identity --strand both --maxhits 1 --threads $opt_threads --uc $temp_files_directory/vsearchfile.uc --matched $temp_files_directory/$matched_reads_fa --notrunclabels --top_hits_only --query_cov 0.7 >> $log 2>&1";
-print "$vsearch_command\n";
-system(" $vsearch_command ") == 0 or die ( "Error in vsearch command: $?.\n" );
-unlink("$temp_files_directory/reads.fasta");
+my $cat_command = "cat $temp_files_directory/*.matchedreads > $temp_files_directory/$matched_reads_fa";
+my $cleanup4 = "rm $temp_files_directory/*.matchedreads";
+system (" $cat_command ") == 0 or die ("$!");
+system (" $cleanup4 ") == 0 or die ("$!");
 
 #   check if no reads passed this step
 finddepth(\&filecheck, "$temp_files_directory/$matched_reads_fa");
@@ -393,17 +419,24 @@ my $vsearch_hits = "vsearch_hits.txt";
 
 #    for vsearch output file (.uc) in the temp directory, remove any line that begins with H (denotes hit) and push line to an array
 print "\nparsing vsearch output . . .\n";
-open (vsearch_OUTPUT, "<$temp_files_directory/vsearchfile.uc") or die ("$!");
-my @vsearch_output_lines = <vsearch_OUTPUT>;
-close vsearch_OUTPUT;
-foreach my $vsearch_line (@vsearch_output_lines)
+opendir(INDIR, $temp_files_directory) or die ("$!");
+while ($vsearch_outfile = readdir(INDIR))
 {
-	chomp $vsearch_line;
-	if ($vsearch_line =~ m/^H/)
-	{
-		push (@vsearch_hits, $vsearch_line);
-	}
+    next unless ($vsearch_outfile =~ m/\.uc$/);
+    open (VSEARCH_OUTPUT, "<$temp_files_directory/$vsearch_outfile") or die ("$!");
+    my @vsearch_output_lines = <VSEARCH_OUTPUT>;
+    close VSEARCH_OUTPUT;
+    foreach my $vsearch_line (@vsearch_output_lines)
+    {
+        if ($vsearch_line =~ m/^H/)
+        {
+            push (@vsearch_hits, $vsearch_line);
+        }
+    }
 }
+closedir(INDIR);
+my $cleanup5 = "rm $temp_files_directory/*.uc";
+system ( $cleanup5 ) == 0 or die ("$!");
 foreach my $vsearch_hit (@vsearch_hits)
 {
     $vsearch_hit =~ s/\s/\t/g;
