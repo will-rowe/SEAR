@@ -3,7 +3,7 @@
 
 ## General updates
 
-    1.12.2015:   The server that hosts SEAR is being retired. Consequently, a Docker container image has been created and it is the easiest way to run SEAR yourself.
+    1.12.2015:   A Docker container image has been created and it is the easiest way to run SEAR yourself.
 
 
 
@@ -25,12 +25,11 @@ A paper describing the design and implementation of SEAR has been published in [
 
 There are several versions of SEAR available:
 
-#### 1.	SEAR App on BaseSpace
+#### 1.	SEAR App
 
-+ As of xx.xx.xxxx, SEAR is available as an App on the Illumina BaseSpace analysis platform.
++
 
-+ Link here: [SEAR BaseSpace App](www.google.com).
-
++
 
 #### 2.	SEAR.docker_version
 
