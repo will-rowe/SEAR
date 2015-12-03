@@ -233,10 +233,10 @@ foreach my $in_file (@opt_inputfiles)
 print "\n################################################\n";
 print "Starting main SEAR program\n";
 print "################################################\n";
-# Set up files
+#   set up files
 my $log = "$temp_files_directory/log.txt";
 
-# Check if project id exists in data/output
+#   check if project id exists in data/output
 use File::Path qw(make_path);
 my $dir = "/data/output/appresults/$project_output";
 eval { make_path($dir) };
@@ -304,7 +304,7 @@ foreach my $in_file (@opt_inputfiles)
 # Filter reads using Ecoli K12.
 if ($opt_filter_reads =~ m/Y/)
 {
-    # Set up local copy of ecoli genome bwa index
+    #   set up local copy of e coli genome bwa index
     print "\npreparing to filter reads against the E. coli K12 reference genome . . .\n";
     my $setup_hg = "cp /SEAR/SEAR_DATA/references/EcoliK12.tar.gz $temp_files_directory/ && tar -xvf $temp_files_directory/EcoliK12.tar.gz -C $temp_files_directory/";
     system ( "$setup_hg" ) == 0 or die "Can't set up ecoli genome bwa index: $!\n";
@@ -374,7 +374,7 @@ unlink("$temp_files_directory/reads.fasta");
 
 
 ############################################################################
-### vsearch ###
+### CLUSTERING ###
 ############################################################################
 ## Each split file of fasta reads is clustered against the reference ARG database.
 #   for every split file containing fasta reads in the temp directory, run each as separate vsearch against database of reference sequences
@@ -385,7 +385,7 @@ print "clustering with vsearch . . .\ncurrent split file:\t";
 while ($vsearch_infile = readdir(INDIR))
 {
     next unless ($vsearch_infile =~ m/\.vsearch.fasta$/);
-    my $vsearch_command = "vsearch --usearch_global $temp_files_directory/$vsearch_infile --db $opt_database --id $opt_clustering_identity --strand both --maxhits 1 --threads $opt_threads --uc $temp_files_directory/$counter.vsearchfile.uc --matched $temp_files_directory/$counter.matchedreads --notrunclabels --top_hits_only --query_cov 0.7 >> $log 2>&1";
+    my $vsearch_command = "vsearch --usearch_global $temp_files_directory/$vsearch_infile --db $opt_database --uc $temp_files_directory/$counter.vsearchfile.uc --matched $temp_files_directory/$counter.matchedreads --id $opt_clustering_identity --strand both --maxhits 1 --threads $opt_threads --notrunclabels --query_cov 0.7 >> $log 2>&1";
     print "$counter, ";
     system(" $vsearch_command ") == 0 or die ( "Error in vsearch command: $?.\n" );
     my $rm_command = "rm $temp_files_directory/$vsearch_infile";
