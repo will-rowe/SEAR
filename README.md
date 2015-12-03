@@ -3,7 +3,7 @@
 
 ## General updates
 
-    1.12.2015 -   The server that hosts SEAR is being retired. Consequently, a Docker container image has been created and it is the easiest way to run SEAR yourself.
+    1.12.2015:   The server that hosts SEAR is being retired. Consequently, a Docker container image has been created and it is the easiest way to run SEAR yourself.
 
 
 
@@ -44,7 +44,7 @@ The SEAR Docker container image can be pulled directly from the [Docker Hub](htt
 
 `docker pull wpmr/sear`
 
-Alternatively, the SEAR Docker container image can be built using the Dockerfile in SEAR.docker_version:
+Alternatively, the SEAR Docker container image can be built using the Dockerfile:
 
 `docker build -t 'docker:sear' .`
 
