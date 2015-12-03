@@ -367,7 +367,7 @@ print "\n\nadding fasta reads to a temporary file . . .\n\nsplitting the tempora
 my $split_command2 = "split -a 10 -l 1000000 $temp_files_directory/reads.fasta $temp_files_directory/split";
 system (" $split_command2 ") == 0 or die ( "Can't split temporary file for vsearch: $?.\n" );
 my $bash_command_part_a = "for file in $temp_files_directory/split*;";
-my $bash_command_part_b = ' do mv "$file" "$file.fasta"; done';
+my $bash_command_part_b = ' do mv "$file" "$file.vsearch.fasta"; done';
 my $bash_command2 = $bash_command_part_a . $bash_command_part_b;
 my $fastarename = ` $bash_command2 `;
 unlink("$temp_files_directory/reads.fasta");
@@ -384,7 +384,7 @@ opendir(INDIR, $temp_files_directory) or die ("$!");
 print "clustering with vsearch . . .\ncurrent split file:\t";
 while ($vsearch_infile = readdir(INDIR))
 {
-    next unless ($vsearch_infile =~ m/\.fasta$/);
+    next unless ($vsearch_infile =~ m/\.vsearch.fasta$/);
     my $vsearch_command = "vsearch --usearch_global $temp_files_directory/$vsearch_infile --db $opt_database --id $opt_clustering_identity --strand both --maxhits 1 --threads $opt_threads --uc $temp_files_directory/$counter.vsearchfile.uc --matched $temp_files_directory/$counter.matchedreads --notrunclabels --top_hits_only --query_cov 0.7 >> $log 2>&1";
     print "$counter, ";
     system(" $vsearch_command ") == 0 or die ( "Error in vsearch command: $?.\n" );

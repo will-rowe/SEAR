@@ -71,11 +71,11 @@ SEAR calls on several pieces of bioinformatic software:
 
 + [BLAST](http://www.ncbi.nlm.nih.gov/pubmed/2231712)
 
-+ [USEARCH](http://www.drive5.com/usearch/)(used only in old SEAR versions)
++ [USEARCH](http://www.drive5.com/usearch/) (used only in old SEAR versions)
 
-SEAR requires a database for the initial clustering of reads. This can be a user supplied database but a copy of the ARG-annot database is included with SEAR:
+SEAR requires a database for the initial clustering of reads. This can be a user supplied database (multifasta file) but a copy of the ARG-ANNOT database is included with SEAR and is used by default:
 
-+ [ARG-annot](http://www.ncbi.nlm.nih.gov/pubmed/24145532)
++ [ARG-ANNOT](http://www.ncbi.nlm.nih.gov/pubmed/24145532)
 
 
 
