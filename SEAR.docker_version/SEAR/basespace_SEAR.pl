@@ -828,7 +828,7 @@ if (%abundance_values)
     ############################################################################
     ## The SEAR program creates the output files and results page (in html format), complete with links out to online databases.
     #   create raw data file
-    my $raw_data_outfile = "$opt_results/SEARdata.csv";
+    my $raw_data_outfile = "$opt_results/SEARdata.tsv";
     open (OUTFILE, ">>$raw_data_outfile") or die "can't write to $raw_data_outfile: $!";
     print OUTFILE "$opt_results\n#\tREFERENCE SEQUENCE MATCHED\tRELATIVE ARG ABUNDANCE/%\tblastn ARDB\n";
     my $result_counter = 1;
@@ -952,7 +952,7 @@ if (%abundance_values)
     close OUTFILE;
     
     #   make results flatfile (may not be useful...--> leftover function from web version of SEAR)
-    my $make_flat_file = "mkdir $opt_results/flat_file_and_blast_files && mv $opt_results/*.html $opt_results/flat_file_and_blast_files/ && cp $opt_results/SEARdata.csv $opt_results/flat_file_and_blast_files/ && tar -cvf $opt_results/flat_file.tar -C $opt_results/flat_file_and_blast_files .";
+    my $make_flat_file = "mkdir $opt_results/flat_file_and_blast_files && mv $opt_results/*.html $opt_results/flat_file_and_blast_files/ && cp $opt_results/SEARdata.tsv $opt_results/flat_file_and_blast_files/ && tar -cvf $opt_results/flat_file.tar -C $opt_results/flat_file_and_blast_files .";
     system ( "$make_flat_file" ) == 0 or die ("Can't make flat file: $!\n");
     my $flat_file_insert_line = "href=\"download_flat_file\"";
     my $flat_file_entry = "href=\"./FILES/flat_file.tar\"";
@@ -972,7 +972,7 @@ if (%abundance_values)
     if ($@) {
       print "Couldn't create $tidy_dir: $@";
     }
-    my $move_files = "rm -r $opt_results/flat_file_and_blast_files && mv $opt_results/html_files $opt_results/SEARdata.csv $opt_results/BLAST_QUERY_SEQUENCES.fasta $opt_results/consensus_seqs.fq $opt_results/flat_file.tar $tidy_dir && cp -r /SEAR/SEAR_DATA/references $tidy_dir/ && cp /SEAR/README_basespace_results $opt_results/";
+    my $move_files = "rm -r $opt_results/flat_file_and_blast_files && mv $opt_results/html_files $opt_results/SEARdata.tsv $opt_results/BLAST_QUERY_SEQUENCES.fasta $opt_results/consensus_seqs.fq $opt_results/flat_file.tar $tidy_dir && cp -r /SEAR/SEAR_DATA/references $tidy_dir/ && cp /SEAR/README_basespace_results $opt_results/";
     system ( "$move_files" ) == 0 or die ("Can't tidy files: $!\n");
 
     #   tidy results
