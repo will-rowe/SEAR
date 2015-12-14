@@ -1,8 +1,9 @@
-![Logo](http://i.imgsafe.org/cfbf602.png) SEAR: Search Engine for Antimicrobial Resistance
+SEAR: Search Engine for Antimicrobial Resistance
 ====
 
 -----------
 
+<img src="http://i.imgsafe.org/cfbf602.png" alt="Drawing" style="width: 200px;"/>
 
 Contents
 ----
