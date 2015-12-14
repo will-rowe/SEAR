@@ -3,6 +3,9 @@
 -----------
 
 
+SEAR: Search Engine for Antimicrobial Resistance
+====
+
 Contents
 ----
 [General updates](https://github.com/wpmr2/sear#general-updates)
@@ -84,15 +87,14 @@ References
 
 SEAR calls on several pieces of bioinformatic software: 
 
-+ [VSEARCH](https://github.com/torognes/vsearch)
 
-+ [BWA-MEM](http://arxiv.org/abs/1303.3997)
-
-+ [SAMtools](http://www.ncbi.nlm.nih.gov/pubmed/19505943)
-
-+ [BLAST](http://www.ncbi.nlm.nih.gov/pubmed/2231712)
-
-+ [USEARCH](http://www.drive5.com/usearch/) (used only in old SEAR versions)
+# | Reference | Function
+--- | --- | ---
+1 | [VSEARCH](https://github.com/torognes/vsearch) | `used to quality check, convert and cluster reads`
+2 | [BWA-MEM](http://arxiv.org/abs/1303.3997) | `used to map clustered reads to ARG reference sequences`
+3 | [SAMtools](http://www.ncbi.nlm.nih.gov/pubmed/19505943) | `used to create ARG consensus sequences from mapped reads`
+4 | [BLAST](http://www.ncbi.nlm.nih.gov/pubmed/2231712) | `used to compare ARG consensus sequences to online databases`
+5 | [USEARCH](http://www.drive5.com/usearch/) | `used in place of VSEARCH in older SEAR versions`
 
 SEAR requires a database for the initial clustering of reads. This can be a user supplied database (multifasta file) but a copy of the ARG-ANNOT database is included with SEAR and is used by default:
 
