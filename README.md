@@ -1,9 +1,7 @@
-SEAR: Search Engine for Antimicrobial Resistance
-====
+![alt tag](http://i.imgsafe.org/22ed408.jpg)
 
 -----------
 
-<img src="http://i.imgsafe.org/cfbf602.png" alt="Drawing" style="width: 200px;"/>
 
 Contents
 ----
@@ -47,13 +45,14 @@ Versions
 
 There are several versions of SEAR available:
 
-#### 1.	SEAR App
+1.	SEAR App
+----
 
 +
 
-+
 
-#### 2.	SEAR.docker_version
+2.	SEAR.docker_version
+----
 
 + The Docker version of SEAR is the version behind the SEAR App. This version of SEAR runs using a 'Docker container' and will have all the required software and dependencies to run properly. An introduction to using Docker can be found [here](https://training.docker.com/).
 
@@ -70,8 +69,8 @@ There are several versions of SEAR available:
     `docker build -t 'docker:sear' .`
 
 
-
-#### 3.	SEAR.command_line_version
+3.	SEAR.command_line_version
+----
 
 + The original version of SEAR is still available. This is the command line version which requires the user to set up all the required dependencies. It also requires USEARCH still, unlike the other SEAR versions that now use VSEARCH (an open source alternative to USEARCH).
 
