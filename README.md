@@ -1,14 +1,34 @@
-# SEAR: Search Engine for Antimicrobial Resistance
+![Logo](http://i.imgsafe.org/cfbf602.png) SEAR: Search Engine for Antimicrobial Resistance
+====
+
+-----------
 
 
-## General updates
+Contents
+----
+[General updates](https://github.com/wpmr2/sear#general-updates)
+
+[Introduction](https://github.com/wpmr2/sear#introduction)
+
+[Versions](https://github.com/wpmr2/sear#versions)
+
+[References](https://github.com/wpmr2/sear#references)
+
+[Contact](https://github.com/wpmr2/sear#contact)
+
+-----------
+
+
+General updates
+====
 
     1.12.2015:   A Docker container image has been created and it is the easiest way to run SEAR yourself.
 
+-----------
 
 
-
-## Introduction
+Introduction
+====
 
 The aim of this project is to provide an easy to use tool that can construct full-length, horizontally acquired **Antimicrobial Resistance Genes (ARGs)** from sequencing data.
 
@@ -18,10 +38,11 @@ SEAR outputs: ARG annotation, relative ARG abundance (%), consensus sequence and
 
 A paper describing the design and implementation of SEAR has been published in [PLoS ONE](http://doi.org/10.1371/journal.pone.0133492).
 
+-----------
 
 
-
-## Versions
+Versions
+====
 
 There are several versions of SEAR available:
 
@@ -55,10 +76,11 @@ There are several versions of SEAR available:
 
 + The README.md file in SEAR.command_line_version explains how to set up this version of SEAR.
 
+-----------
 
 
-
-## References
+References
+====
 
 SEAR calls on several pieces of bioinformatic software: 
 
@@ -76,10 +98,11 @@ SEAR requires a database for the initial clustering of reads. This can be a user
 
 + [ARG-ANNOT](http://www.ncbi.nlm.nih.gov/pubmed/24145532)
 
+-----------
 
 
-
-## Contact
+Contact
+====
 
 Please visit the [SEAR Forum](https://groups.google.com/forum/#!forum/sear) to post a question, report a bug or start a discussion.
 
