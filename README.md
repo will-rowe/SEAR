@@ -88,8 +88,8 @@ References
 SEAR calls on several pieces of bioinformatic software: 
 
 
-# | Reference | Function
---- | --- | ---
+Number | Reference | Function
+------ | --------- | --------
 1 | [VSEARCH](https://github.com/torognes/vsearch) | `used to quality check, convert and cluster reads`
 2 | [BWA-MEM](http://arxiv.org/abs/1303.3997) | `used to map clustered reads to ARG reference sequences`
 3 | [SAMtools](http://www.ncbi.nlm.nih.gov/pubmed/19505943) | `used to create ARG consensus sequences from mapped reads`
