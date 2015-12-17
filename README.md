@@ -51,11 +51,11 @@ There are several versions of SEAR available:
 1.	SEAR App
 ----
 
-+ The SEAR App is due to be published on the BaseSpace platform (Illumina).
++ The SEAR App is due to be published on the [BaseSpace](https://basespace.illumina.com/home/sequence) platform (Illumina).
 
 + This is the recommended version to use as it is actively being developed and has the latest version of the SEAR report output.
 
-+ Visit [BaseSpace](https://basespace.illumina.com/apps/2083081/SEAR-Antibiotic-Resistance?preferredversion) to find out more and try the App!
++ Visit the SEAR App [page](https://basespace.illumina.com/apps/2083081/SEAR-Antibiotic-Resistance?preferredversion) to find out more and try the App!
 
 
 2.	SEAR.docker_version
