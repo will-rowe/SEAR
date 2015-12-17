@@ -38,7 +38,7 @@ SEAR has been designed with **environmental metagenomics** / **microbiome** expe
 
 SEAR outputs: ARG annotation, relative ARG abundance (%), consensus sequence and search results (from ARDB, RAC, NCBI nr and nt databases).
 
-A paper describing the design and implementation of SEAR has been published in [PLoS ONE](http://doi.org/10.1371/journal.pone.0133492){:target="_blank"}.
+A paper describing the design and implementation of SEAR has been published in <a href="http://doi.org/10.1371/journal.pone.0133492" target="_blank">PloS ONE</a>.
 
 -----------
 
