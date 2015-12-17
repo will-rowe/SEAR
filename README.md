@@ -51,23 +51,23 @@ There are several versions of SEAR available:
 1.	SEAR App
 ----
 
-+ The SEAR App is due to be published on the [BaseSpace](https://basespace.illumina.com/home/sequence){:target="_blank"} platform (Illumina).
++ The SEAR App is due to be published on the <a href="https://basespace.illumina.com/home/sequence" target="_blank">BaseSpace</a> platform (Illumina).
 
 + This is the recommended version to use as it is actively being developed and has the latest version of the SEAR report output.
 
-+ Visit the SEAR App [page](https://basespace.illumina.com/apps/2083081/SEAR-Antibiotic-Resistance?preferredversion){:target="_blank"} to find out more and try the App!
++ Visit the SEAR App <a href="https://basespace.illumina.com/apps/2083081/SEAR-Antibiotic-Resistance?preferredversion" target="_blank">page</a> to find out more and try the App!
 
 
 2.	SEAR.docker_version
 ----
 
-+ The Docker version of SEAR is the version behind the SEAR App. This version of SEAR runs using a 'Docker container' and will have all the required software and dependencies to run properly. An introduction to using Docker can be found [here](https://training.docker.com/){:target="_blank"}.
++ The Docker version of SEAR is the version behind the SEAR App. This version of SEAR runs using a 'Docker container' and will have all the required software and dependencies to run properly. An introduction to using Docker can be found <a href="https://training.docker.com/" target="_blank">here</a>.
 
 + A user can use the SEAR Docker container on a local machine and run SEAR as they would a command line script. 
 
 + Alternatively, the SEAR Docker container can be run on a server (as in the App version, which uses Amazon cloud servers).
 
-+ The SEAR Docker container image can be pulled directly from the [Docker Hub](https://hub.docker.com/r/wpmr/sear/){:target="_blank"}:
++ The SEAR Docker container image can be pulled directly from the <a href="https://hub.docker.com/r/wpmr/sear/" target="_blank">Docker Hub</a>:
 
     `docker pull wpmr/sear`
 
@@ -94,15 +94,15 @@ SEAR calls on several pieces of bioinformatic software:
 
 Number | Reference | Function
 ------ | --------- | --------
-1 | [VSEARCH](https://github.com/torognes/vsearch){:target="_blank"} | `used to quality check, convert and cluster reads`
-2 | [BWA-MEM](http://arxiv.org/abs/1303.3997){:target="_blank"} | `used to map clustered reads to ARG reference sequences`
-3 | [SAMtools](http://www.ncbi.nlm.nih.gov/pubmed/19505943){:target="_blank"} | `used to create ARG consensus sequences from mapped reads`
-4 | [BLAST](http://www.ncbi.nlm.nih.gov/pubmed/2231712){:target="_blank"} | `used to compare ARG consensus sequences to online databases`
-5 | [USEARCH](http://www.drive5.com/usearch/){:target="_blank"} | `used in place of VSEARCH in older SEAR versions`
+1 | [VSEARCH](https://github.com/torognes/vsearch) | `used to quality check, convert and cluster reads`
+2 | [BWA-MEM](http://arxiv.org/abs/1303.3997) | `used to map clustered reads to ARG reference sequences`
+3 | [SAMtools](http://www.ncbi.nlm.nih.gov/pubmed/19505943) | `used to create ARG consensus sequences from mapped reads`
+4 | [BLAST](http://www.ncbi.nlm.nih.gov/pubmed/2231712) | `used to compare ARG consensus sequences to online databases`
+5 | [USEARCH](http://www.drive5.com/usearch/) | `used in place of VSEARCH in older SEAR versions`
 
 SEAR requires a database for the initial clustering of reads. This can be a user supplied database (multifasta file) but a copy of the ARG-ANNOT database is included with SEAR and is used by default:
 
-+ [ARG-ANNOT](http://www.ncbi.nlm.nih.gov/pubmed/24145532){:target="_blank"}
++ [ARG-ANNOT](http://www.ncbi.nlm.nih.gov/pubmed/24145532)
 
 -----------
 
@@ -110,6 +110,6 @@ SEAR requires a database for the initial clustering of reads. This can be a user
 Contact
 ====
 
-Please visit the [SEAR Forum](https://groups.google.com/forum/#!forum/sear){:target="_blank"} to post a question, report a bug or start a discussion.
+Please visit the <a href="https://groups.google.com/forum/#!forum/sear" target="_blank">SEAR forum</a> to post a question, report a bug or start a discussion.
 
 Alternatively, please send an email to Will Rowe at: [wpmr2@cam.ac.uk](mailto:wpmr2@cam.ac.uk?subject=SEAR).
