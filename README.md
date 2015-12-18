@@ -84,6 +84,16 @@ There are several versions of SEAR available:
 
 + The README.md file in SEAR.original_cl_version explains how to set up this version of SEAR.
 
+
+4.	SEAR.original_web_version
+----
+
++ The original of the SEAR and web interface is still available. This is an interface to run SEAR on a personal web server. 
+
++ Uncompress the SEAR_web_version.tar.gz file and view the README.md file for instructions.
+
++ Screenshots are available <a href="http://i.imgsafe.org/db9ea41.png" target="_blank">here</a>, <a href="http://i.imgsafe.org/26b32f1.png" target="_blank">here</a> and <a href="http://i.imgsafe.org/3b422ba.png" target="_blank">here</a>.
+
 -----------
 
 
