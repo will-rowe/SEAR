@@ -24,7 +24,8 @@ Contents
 General updates
 ====
 
-    1.12.2015:   A Docker container image has been created and it is the easiest way to run SEAR yourself.
+    17.12.2015:   The SEAR App has been published on BaseSpace.
+    01.12.2015:   A Docker container image for SEAR has been created.
 
 -----------
 
@@ -36,7 +37,7 @@ The aim of this project is to provide an easy to use tool that can construct ful
 
 SEAR has been designed with **environmental metagenomics** / **microbiome** experiments in mind, where the diversity and relative abundance of ARGs would like to be determined both quickly and easily.
 
-SEAR outputs: ARG annotation, relative ARG abundance (%), consensus sequence and search results (from ARDB, RAC, NCBI nr and nt databases).
+SEAR outputs: ARG annotation, relative ARG abundance (%), consensus sequence and search results (from ARDB, RAC, NCBI nucleotide and protein databases).
 
 A paper describing the design and implementation of SEAR has been published in <a href="http://doi.org/10.1371/journal.pone.0133492" target="_blank">PloS ONE</a>.
 
@@ -51,7 +52,7 @@ There are several versions of SEAR available:
 1.	SEAR App
 ----
 
-+ The SEAR App is due to be published on the <a href="https://basespace.illumina.com/home/sequence" target="_blank">BaseSpace</a> platform (Illumina).
++ The SEAR App is available on the <a href="https://basespace.illumina.com/home/sequence" target="_blank">BaseSpace</a> platform (Illumina).
 
 + This is the recommended version to use as it is actively being developed and has the latest version of the SEAR report output.
 
@@ -76,12 +77,12 @@ There are several versions of SEAR available:
     `docker build -t 'docker:sear' .`
 
 
-3.	SEAR.command_line_version
+3.	SEAR.original_cl_version
 ----
 
 + The original version of SEAR is still available. This is the command line version which requires the user to set up all the required dependencies. It also requires USEARCH still, unlike the other SEAR versions that now use VSEARCH (an open source alternative to USEARCH).
 
-+ The README.md file in SEAR.command_line_version explains how to set up this version of SEAR.
++ The README.md file in SEAR.original_cl_version explains how to set up this version of SEAR.
 
 -----------
 
