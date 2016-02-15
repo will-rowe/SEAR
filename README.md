@@ -123,4 +123,4 @@ Contact
 
 Please visit the <a href="https://groups.google.com/forum/#!forum/sear" target="_blank">SEAR forum</a> to post a question, report a bug or start a discussion.
 
-Alternatively, please send an email to Will Rowe at: [wpmr2@cam.ac.uk](mailto:wpmr2@cam.ac.uk?subject=SEAR).
+Alternatively, please send an email to Will Rowe at: [will.rowe@nhs.net](mailto:will.rowe@nhs.net?subject=SEAR).
