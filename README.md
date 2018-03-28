@@ -6,6 +6,10 @@
 SEAR: Search Engine for Antimicrobial Resistance
 ====
 
+
+>SEAR is no longer maintained -- please now use [GROOT](https://github.com/will-rowe/groot) for resistome profiling
+
+
 Contents
 ----
 [General updates](https://github.com/wpmr2/sear#general-updates)
